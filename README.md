@@ -1,8 +1,20 @@
 # market-statistics-project
-Scripts for the creation and compilation of tidy data tables and the analysis of this data. 
 
-Note that:
+## Description
 
-market_statistics_python.ipynb   is for the conversion of excel files into tidy data tables.
+This project builds an end-to-end data pipeline for collecting, cleaning, and analysing insurance market statistics data.
 
-market_statistics_marimo.py      is for the compilation of these tables for further analysis.
+It combines:
+- A **Jupyter Notebook** for data extraction and transformation  
+- A **Marimo application** for interactive analysis and ratio calculation  
+
+The aim is to convert raw Excel data into a clean, consistent **tidy data format** and use it to perform actuarial-style analysis.
+
+## Key Features
+- Scrapes Excel files from webpage URLs  
+- Accepts local Excel file paths as input  
+- Converts raw data into tidy (long) format  
+- Stores cleaned outputs in a structured folder  
+- Combines multiple datasets into one master dataset  
+- Interactive filtering using a year range slider  
+- Calculates key actuarial ratios
