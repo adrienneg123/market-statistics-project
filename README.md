@@ -1,4 +1,4 @@
-# market-statistics-project
+# Market Statistics Project
 
 ## Description
 
