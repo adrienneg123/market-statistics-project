@@ -1,5 +1,6 @@
 # Market Statistics Project
-(WIP to be removed m_s_jupyter is most up to date script and should split problem tabs like ult data.)
+(WIP to be removed m_s_jupyter is most up to date script and should split problem tabs like ult data.
+m_S_tables_charts the most up to date marimo script.)
 ## Description
 
 This project builds an end-to-end data pipeline for collecting, cleaning, and analysing insurance market statistics data.
