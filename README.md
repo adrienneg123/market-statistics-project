@@ -19,7 +19,7 @@ The overall aim of the project is to turn unstructured or inconsistently formatt
 
 This repository contains two main components:
 
-### 1️⃣ Excel → CSV Processing Script
+### Excel → CSV Processing Script
 
 A robust Python pipeline that:
 
