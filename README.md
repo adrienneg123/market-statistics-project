@@ -113,6 +113,8 @@ Within the app you can:
 
 ## Project Structure
 
+text
+''
 project/
 │
 ├── market_statistics_jupyter.ipynb
