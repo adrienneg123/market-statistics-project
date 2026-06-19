@@ -97,6 +97,8 @@ The plotting tools support:
 ---
 
 ## Repository Structure
+
+```text
 project-root/
 │
 ├── market_statistics_project.ipynb
