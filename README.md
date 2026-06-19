@@ -42,7 +42,7 @@ tidy_outputs/
 
 ---
 
-### 2️⃣ Interactive Marimo Analysis App
+### Interactive Marimo Analysis App
 
 An interactive notebook that enables:
 
