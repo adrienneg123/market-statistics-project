@@ -97,14 +97,12 @@ The plotting tools support:
 ---
 
 ## Repository Structure
-
-```text
 project-root/
 │
 ├── market_statistics_project.ipynb
 │   Jupyter workflow for extracting tables from raw Excel files and exporting tidy CSVs.
 │
-├── marimo_market_statistics_project.py
+├── market_statistics_tables_charts_v4.py
 │   Main interactive Marimo app for loading tidy CSVs, building a master analysis
 │   dataframe, filtering data, creating summary tables, calculating ratios, and charting.
 │
