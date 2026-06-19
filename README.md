@@ -115,6 +115,7 @@ Within the app you can:
 
 text
 ''
+
 project/
 │
 ├── market_statistics_jupyter.ipynb
