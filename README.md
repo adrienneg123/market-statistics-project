@@ -112,7 +112,6 @@ Within the app you can:
 ---
 
 ## Project Structure
-
 text
 ''
 
