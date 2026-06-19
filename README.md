@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a Python-based workflow for extracting, tidying, analysing, and visualising market statistics data from complex Excel and CSV sources.
+This project is a Python-based workflow for extracting, tidying, analysing, and visualising market statistics data from Excel and CSV sources.
 
 The repository was designed to support a structured market statistics workflow by:
 
