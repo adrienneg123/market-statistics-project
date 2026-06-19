@@ -8,7 +8,6 @@ The repository was designed to support a structured market statistics workflow b
 
 - extracting tables from messy multi-sheet Excel workbooks,
 - converting those tables into tidy analysis-ready CSV outputs,
-- harmonising schemas across multiple files,
 - building a standardised master analysis dataset,
 - enabling interactive filtering and summary analysis,
 - calculating reusable ratios,
@@ -18,98 +17,108 @@ The overall aim of the project is to turn unstructured or inconsistently formatt
 
 ---
 
-## Key Features
+This repository contains two main components:
 
-### 1. Excel extraction and tidying
-The Jupyter-based script processes Excel files from multiple sources:
-- a webpage containing Excel links,
-- a single local Excel file,
-- or a local folder of Excel files.
+### 1️⃣ Excel → CSV Processing Script
 
-It includes logic to:
-- detect headers in messy worksheets,
-- identify year/date/period structures,
-- recognise already-long versus wide-form tables,
-- remove title/footer noise,
-- split sheets into separate tables,
-- and export tidy CSV outputs.
+A robust Python pipeline that:
 
-A fallback workflow is also included for more difficult sheet layouts, such as:
-- multiple tables on one sheet,
-- blank-row/blank-column separated blocks,
-- horizontally merged tables,
-- embedded section headings,
-- and irregular header structures.
+- Extracts Excel data from:
+  - Webpages (automatically detects Excel links)
+  - Local files
+  - Folders of Excel files
+- Handles messy real-world Excel structures:
+  - Multiple tables per sheet
+  - Irregular headers
+  - Mixed formats
+- Uses a dual-processing approach:
+  - Script 1 (primary) handles structured tables
+  - Script 2 (fallback) handles complex or irregular layouts
+- Outputs clean, analysis-ready CSV files
 
-### 2. Tidy output generation
-Processed outputs are saved into a `tidy_outputs/` folder as CSV files.  
-A processing log is also created so that each sheet or detected table can be tracked by:
-- source file,
-- sheet name,
-- table index,
-- processing method,
-- and save/skipped status.
+Each detected table is exported as a separate CSV inside:
 
-### 3. Master analysis dataset
-The main Marimo application loads one or more tidy CSV files and builds a standardised **master analysis dataframe**.
-
-This includes:
-- schema harmonisation across files,
-- standardised column naming,
-- derived time fields,
-- metric naming logic,
-- metric categorisation,
-- source lineage fields,
-- and a simplified analysis-ready structure.
-
-### 4. Interactive filtering and table building
-The Marimo app provides a reactive interface for:
-- filtering by year range,
-- period type,
-- cover type,
-- source file,
-- metric category,
-- and metric name.
-
-Users can then generate custom summary tables using flexible row, column, value, and aggregation selections.
-
-### 5. Generic ratio engine
-The analysis workflow includes a reusable ratio builder that allows the user to:
-- choose numerator metric(s),
-- choose denominator metric(s),
-- define grouping columns,
-- and calculate ratios using a selected aggregation method.
-
-This makes it easier to explore metrics without hardcoding one-off calculations throughout the notebook.
-
-### 6. Interactive visualisation
-Two visualisation layers are included:
-
-- **Altair-based charting** in the main Marimo app for charting filtered, summary, or ratio datasets
-- **Plotly-based quick charting** in a lightweight Marimo app for fast CSV exploration
-
-The plotting tools support:
-- configurable x/y axes,
-- optional grouping/colour dimensions,
-- automatic aggregation when duplicate groups exist,
-- and faceting behaviour for measures with different scales.
+tidy_outputs/
 
 ---
 
-## Repository Structure
+### 2️⃣ Interactive Marimo Analysis App
 
-```text
-project-root/
+An interactive notebook that enables:
+
+- Uploading CSV files or selecting a folder of CSVs
+- Interactive filtering
+- Building custom ratios using selected metrics
+- Creating interactive charts and tables
+
+---
+
+##  Workflow
+
+Excel files → Processing script → Tidy CSVs → Marimo app → Interactive analysis
+
+---
+
+##  Installation
+
+Install dependencies:
+
+pip install pandas numpy requests beautifulsoup4 openpyxl marimo altair --trusted-host pypi.org --trusted-host files.pythonhosted.org
+
+---
+
+##  Usage
+
+### Step 1: Run the processing script
+
+market_statistics_jupyter.ipynb
+
+Choose one of the following:
+1. Scrape Excel files from a webpage  
+2. Use a local Excel file  
+3. Use a folder of Excel files  
+
+Processed outputs will be saved in:
+
+tidy_outputs/
+
+---
+
+### Step 2: Launch the marimo app
+
+marimo edit market_statistics_final.py
+
+---
+
+### Step 3: Load data in the app
+
+Choose an input method:
+
+- Uploaded files → upload CSVs directly  
+- Folder path → point to tidy_outputs/  
+- Auto mode → prioritises uploaded files  
+
+---
+
+### Step 4: Analyse
+
+Within the app you can:
+
+- Filter the dataset  
+- Build summary tables  
+- Create custom ratios  
+- Generate interactive visualisations  
+
+---
+
+## Project Structure
+
+project/
 │
-├── market_statistics_project.ipynb
-│   Jupyter workflow for extracting tables from raw Excel files and exporting tidy CSVs.
-│
-├── market_statistics_tables_charts_v4.py
-│   Main interactive Marimo app for loading tidy CSVs, building a master analysis
-│   dataframe, filtering data, creating summary tables, calculating ratios, and charting.
-│
-├── market_statistics_project_plotly.py
-│   Lightweight Marimo app for quick visual exploration of a single CSV file using Plotly.
-│
-└── tidy_outputs/
-    Output folder containing generated tidy CSV files and processing_log.csv.
+├── market_statistics_jupyter.ipynb
+├── marimo edit market_statistics_final.py
+├── tidy_outputs/
+└── README.md
+
+---
+
