@@ -120,7 +120,7 @@ Within the app you can:
 project/
 │
 ├── market_statistics_jupyter.ipynb
-├── marimo edit market_statistics_final.py
+├── market_statistics_final.py
 ├── tidy_outputs/
 └── README.md
 ```
