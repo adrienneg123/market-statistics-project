@@ -86,7 +86,7 @@ tidy_outputs/
 
 ### Step 2: Launch the marimo app
 
-marimo edit market_statistics_final.py
+marimo run market_statistics_final.py
 
 ---
 
