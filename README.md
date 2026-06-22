@@ -62,9 +62,11 @@ Excel files → Processing script → Tidy CSVs → Marimo app → Interactive a
 ##  Installation
 
 Install dependencies:
+
 ```
 pip install pandas numpy requests beautifulsoup4 openpyxl marimo altair --trusted-host pypi.org --trusted-host files.pythonhosted.org
 ```
+
 ---
 
 ##  Usage
@@ -85,9 +87,11 @@ tidy_outputs/
 ---
 
 ### Step 2: Launch the marimo app
+
 ```
 marimo run market_statistics_final.py
 ```
+
 ---
 
 ### Step 3: Load data in the app
