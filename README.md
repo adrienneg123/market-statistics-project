@@ -6,7 +6,7 @@ This project is a Python-based workflow for extracting, tidying, analysing, and 
 
 The repository was designed to support a structured market statistics workflow by:
 
-- extracting tables from messy multi-sheet Excel workbooks,
+- extracting tables from multi-sheet Excel workbooks,
 - converting those tables into tidy analysis-ready CSV outputs,
 - building a standardised master analysis dataset,
 - enabling interactive filtering and summary analysis,
