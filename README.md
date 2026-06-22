@@ -118,11 +118,10 @@ Within the app you can:
 ## Project Structure
 ```
 project/
-│
-├── market_statistics_jupyter.ipynb
-├── market_statistics_final.py
-├── tidy_outputs/
-└── README.md
+├── market_statistics_jupyter.ipynb      # scrape & clean raw data
+├── tidy_outputs/                       # processed CSVs for analysis
+├── market_statistics_final.py          # analysis + visualisation (marimo)
+└── README.md                           # project overview & instructions
 ```
 ---
 
