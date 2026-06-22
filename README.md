@@ -27,13 +27,6 @@ A robust Python pipeline that:
   - Webpages (automatically detects Excel links)
   - Local files
   - Folders of Excel files
-- Handles messy real-world Excel structures:
-  - Multiple tables per sheet
-  - Irregular headers
-  - Mixed formats
-- Uses a dual-processing approach:
-  - Script 1 (primary) handles structured tables
-  - Script 2 (fallback) handles complex or irregular layouts
 - Outputs clean, analysis-ready CSV files
 
 Each detected table is exported as a separate CSV inside:
