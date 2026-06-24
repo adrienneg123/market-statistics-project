@@ -82,7 +82,7 @@ tidy_outputs/
 ### Step 2: Launch the marimo app
 
 ```
-marimo run market_statistics_final.py
+marimo run market_statistics_project.py
 ```
 
 ---
@@ -113,7 +113,7 @@ Within the app you can:
 project/
 ├── market_statistics_jupyter.ipynb      # scrape & clean raw data
 ├── tidy_outputs/                       # processed CSVs for analysis
-├── market_statistics_final.py          # analysis + visualisation (marimo)
+├── market_statistics_project.py          # analysis + visualisation (marimo)
 └── README.md                           # project overview & instructions
 ```
 ---
