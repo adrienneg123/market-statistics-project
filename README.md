@@ -112,9 +112,9 @@ Within the app you can:
 ```
 project/
 ├── market_statistics_project_jupyter.ipynb      # scrape & clean raw data
-├── tidy_outputs/                       # processed CSVs for analysis
-├── market_statistics_project.py          # analysis + visualisation (marimo)
-└── README.md                           # project overview & instructions
+├── tidy_outputs/                                # processed CSVs for analysis
+├── market_statistics_project.py                 # analysis + visualisation (marimo)
+└── README.md                                    # project overview & instructions
 ```
 ---
 
