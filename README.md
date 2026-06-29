@@ -89,11 +89,9 @@ marimo run market_statistics_project.py
 
 ### Step 3: Load data in the app
 
-Choose an input method:
 
 - Uploaded files → upload CSVs directly  
-- Folder path → point to tidy_outputs/  
-- Auto mode → prioritises uploaded files  
+
 
 ---
 
