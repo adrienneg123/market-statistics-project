@@ -66,7 +66,7 @@ pip install pandas numpy requests beautifulsoup4 openpyxl marimo altair --truste
 
 ### Step 1: Run the processing script
 
-market_statistics_project_jupyter.ipynb
+market_statistics_jupyter_final.ipynb
 
 Choose one of the following:
 1. Scrape Excel files from a webpage  
@@ -109,7 +109,7 @@ Within the app you can:
 ## Project Structure
 ```
 project/
-├── market_statistics_project_jupyter.ipynb      # scrape & clean raw data
+├── market_statistics_jupyter_final.ipynb        # scrape & clean raw data
 ├── tidy_outputs/                                # processed CSVs for analysis
 ├── market_statistics_project.py                 # analysis + visualisation (marimo)
 └── README.md                                    # project overview & instructions
