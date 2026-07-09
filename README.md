@@ -79,7 +79,7 @@ tidy_outputs/
 
 ---
 
-### Step 2: Launch the marimo app
+### Step 2: Launch the marimo app by running the following code in the VS terminal
 
 ```
 marimo run market_statistics_project.py
