@@ -64,7 +64,7 @@ pip install pandas numpy requests beautifulsoup4 openpyxl marimo altair --truste
 
 ##  Usage
 
-### Step 1: Run the processing script
+### Step 1: Run the processing script in Visual Studio
 
 market_statistics_jupyter_final.ipynb
 
