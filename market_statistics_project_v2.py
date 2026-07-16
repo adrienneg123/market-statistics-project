@@ -1002,12 +1002,6 @@ def _(mo):
     - **Chart type**: changes the visual style (line, bar, point, area)
     - **Aggregation for chart**: controls how numeric values are combined before plotting
 
-    If you are unsure where to start:
-    - use **Filtered data**
-    - choose **year_clean** on the X-axis
-    - choose **value** on the Y-axis
-    - colour by **metric_name**
-    """)
     return
 
 
@@ -1060,9 +1054,13 @@ def _(chart_dataset_choice, filtered_df, mo, pd, ratio_table_df):
         label="X-axis",
     )
 
+    default_y_axis = "value" if "value" in chart_numeric_columns else (
+        chart_numeric_columns[0] if chart_numeric_columns else None
+    )
+
     y_axis = mo.ui.dropdown(
         options=chart_numeric_columns,
-        value=chart_numeric_columns[0] if chart_numeric_columns else None,
+        value=default_y_axis,
         label="Y-axis",
     )
 
