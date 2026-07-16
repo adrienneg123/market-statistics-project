@@ -1066,9 +1066,11 @@ def _(chart_dataset_choice, filtered_df, mo, pd, ratio_table_df):
         label="Y-axis",
     )
 
+    default_colour_by = "metric_name" if "metric_name" in chart_colour_options else "None"
+
     colour_by = mo.ui.dropdown(
         options=chart_colour_options,
-        value="None",
+        value=default_colour_by,
         label="Colour / grouping",
     )
 
