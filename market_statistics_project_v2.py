@@ -580,84 +580,81 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(master_analysis_df, mo, numeric_sorted_unique, safe_sorted_unique):
-    def _():
-        if master_analysis_df is None or master_analysis_df.empty:
-            years = []
-            period_types = []
-            source_files = []
-            metric_names = []
-        else:
-            years = numeric_sorted_unique(master_analysis_df.get("year_clean"))
-            period_types = safe_sorted_unique(master_analysis_df.get("period_type"))
-            source_files = safe_sorted_unique(master_analysis_df.get("source_file"))
-            metric_names = safe_sorted_unique(master_analysis_df.get("metric_name"))
+    if master_analysis_df is None or master_analysis_df.empty:
+        years = []
+        period_types = []
+        source_files = []
+    else:
+        years = numeric_sorted_unique(master_analysis_df.get("year_clean"))
+        period_types = safe_sorted_unique(master_analysis_df.get("period_type"))
+        source_files = safe_sorted_unique(master_analysis_df.get("source_file"))
 
-        if years:
-            yr_min, yr_max = min(years), max(years)
-            year_range = mo.ui.range_slider(
-                start=yr_min,
-                stop=yr_max,
-                value=(yr_min, yr_max),
-                label="Year range",
-            )
-        else:
-            year_range = mo.ui.text(
-                value="No valid years found",
-                label="Year range unavailable",
-                disabled=True,
-            )
-
-        period_type_filter = mo.ui.multiselect(
-            options=period_types,
-            value=period_types,
-            label="Period type",
+    if years:
+        yr_min, yr_max = min(years), max(years)
+        year_range = mo.ui.range_slider(
+            start=yr_min,
+            stop=yr_max,
+            value=(yr_min, yr_max),
+            label="Year range",
+        )
+    else:
+        year_range = mo.ui.text(
+            value="No valid years found",
+            label="Year range unavailable",
+            disabled=True,
         )
 
-        source_file_filter = mo.ui.multiselect(
-            options=source_files,
-            value=source_files,
-            label="Source file",
-        )
-
-        metric_name_filter = mo.ui.multiselect(
-            options=metric_names,
-            value=metric_names,
-            label="Metric name",
-        )
-
-        ui = mo.vstack([
-            year_range,
-            period_type_filter,
-            source_file_filter,
-            metric_name_filter,
-        ])
-
-        return (
-            ui,
-            year_range,
-            period_type_filter,
-            source_file_filter,
-            metric_name_filter,
-        )
-
-
-    (
-        filters_ui,
-        year_range,
-        period_type_filter,
-        source_file_filter,
-        metric_name_filter,
-    ) = _()
-
-    filters_ui
-
-    return (
-        metric_name_filter,
-        period_type_filter,
-        source_file_filter,
-        year_range,
+    period_type_filter = mo.ui.multiselect(
+        options=period_types,
+        value=period_types,
+        label="Period type",
     )
 
+    source_file_filter = mo.ui.multiselect(
+        options=source_files,
+        value=source_files,
+        label="Source file",
+    )
+
+    mo.vstack(
+        [
+            year_range,
+            period_type_filter,
+            source_file_filter,
+        ]
+    )
+
+    return period_type_filter, source_file_filter, year_range
+
+@app.cell(hide_code=True)
+def _(master_analysis_df, mo, safe_sorted_unique, source_file_filter):
+    if (
+        master_analysis_df is None
+        or master_analysis_df.empty
+        or "metric_name" not in master_analysis_df.columns
+    ):
+        metric_names = []
+    else:
+        selected_sources = source_file_filter.value
+
+        if selected_sources and "source_file" in master_analysis_df.columns:
+            source_subset_df = master_analysis_df[
+                master_analysis_df["source_file"].astype(str).isin(selected_sources)
+            ]
+        else:
+            source_subset_df = master_analysis_df
+
+        metric_names = safe_sorted_unique(source_subset_df.get("metric_name"))
+
+    metric_name_filter = mo.ui.multiselect(
+        options=metric_names,
+        value=metric_names,
+        label="Metric name",
+    )
+
+    metric_name_filter
+
+    return (metric_name_filter,)
 
 @app.cell(hide_code=True)
 def _(
@@ -1001,7 +998,8 @@ def _(mo):
     - **Colour / grouping**: optionally splits the chart by an additional category
     - **Chart type**: changes the visual style (line, bar, point, area)
     - **Aggregation for chart**: controls how numeric values are combined before plotting
-
+    """)
+          
     return
 
 
