@@ -237,6 +237,8 @@ def _(pd, re):
             .combine_first(derived_year_from_aq)
         )
 
+        df["year_clean"] = pd.to_numeric(df["year_clean"], errors="coerce").astype("Int64")
+
         df["quarter"] = df["accidentquarter"].apply(quarter_from_accidentquarter)
         df["half_year"] = df["yearh"].apply(parse_half_year)
         df["period_original"] = df.apply(build_period_original, axis=1)
@@ -366,6 +368,7 @@ def _(pd, re):
         numerator_metrics,
         denominator_metrics,
         group_cols,
+        decimal_places,
         pd,
         np,
     ):
@@ -427,6 +430,10 @@ def _(pd, re):
             ratio_df["numerator_value"] / ratio_df["denominator_value"],
         )
 
+        ratio_df[ratio_name] = pd.to_numeric(
+            ratio_df[ratio_name], errors="coerce"
+        ).round(decimal_places)
+        
         return ratio_df
 
 
@@ -681,23 +688,69 @@ def _(
         )
     return (filtered_df,)
 
+@app.cell(hide_code=True)
+def _(mo):
+    preview_row_mode = mo.ui.dropdown(
+        options=["First N rows", "All rows"],
+        value="First N rows",
+        label="Filtered table display",
+    )
+
+    preview_row_limit = mo.ui.number(
+        start=10,
+        stop=10000,
+        step=10,
+        value=100,
+        label="Number of rows to show",
+    )
+
+    mo.vstack([
+        preview_row_mode,
+        preview_row_limit,
+    ])
+    return (preview_row_limit, preview_row_mode,)
 
 @app.cell(hide_code=True)
-def _(filtered_df, mo, pd):
+def _(filtered_df, mo, pd, preview_row_limit, preview_row_mode):
     filtered_preview_cols = [
-        "metric_name",
-        "value",
         "year_clean",
         "quarter",
         "half_year",
         "period_type",
+        "metric_name",
         "source_file",
+        "value",
     ]
 
     if filtered_df is not None and not filtered_df.empty:
-        filtered_cols_to_show = [c for c in filtered_preview_cols if c in filtered_df.columns]
-        filtered_preview_df = filtered_df[filtered_cols_to_show].head(100)
-        filtered_row_text = f"### Filtered data rows: **{len(filtered_df):,}**"
+        filtered_display_df = filtered_df.copy()
+
+        if "year_clean" in filtered_display_df.columns:
+            filtered_display_df["year_clean"] = filtered_display_df["year_clean"].apply(
+                lambda x: str(int(x)) if pd.notna(x) else None
+            )
+
+        filtered_cols_to_show = [
+            c for c in filtered_preview_cols if c in filtered_display_df.columns
+        ]
+
+        row_limit = (
+            int(preview_row_limit.value)
+            if preview_row_limit.value is not None
+            else 100
+        )
+
+        if preview_row_mode.value == "All rows":
+            filtered_preview_df = filtered_display_df[filtered_cols_to_show]
+        else:
+            filtered_preview_df = filtered_display_df[filtered_cols_to_show].head(row_limit)
+
+        shown_count = len(filtered_preview_df)
+        total_count = len(filtered_df)
+
+        filtered_row_text = (
+            f"### Filtered data rows shown: **{shown_count:,}** of **{total_count:,}**"
+        )
     else:
         filtered_preview_df = pd.DataFrame({"info": ["No filtered rows"]})
         filtered_row_text = "No filtered data"
@@ -723,6 +776,7 @@ def _(mo):
     - **Numerator metric(s)**: the metric or metrics to add together for the top of the ratio
     - **Denominator metric(s)**: the metric or metrics to add together for the bottom of the ratio
     - **Calculation view**: controls whether the ratio is calculated overall or split by time period / source columns
+    - **Decimal places**: select to how many decimal places the ratio calculations are displayed
     - **Years to include**: gives you a final year-level check before calculating the ratio
 
     The ratio is calculated as:
@@ -739,11 +793,24 @@ def _(filtered_df, mo, numeric_sorted_unique, safe_sorted_unique):
         ratio_year_options = []
         calculation_view_options = ["Overall"]
     else:
-        ratio_metric_options = safe_sorted_unique(filtered_df["metric_name"]) if "metric_name" in filtered_df.columns else []
-        ratio_year_options = numeric_sorted_unique(filtered_df["year_clean"]) if "year_clean" in filtered_df.columns else []
+        ratio_metric_options = (
+            safe_sorted_unique(filtered_df["metric_name"])
+            if "metric_name" in filtered_df.columns else []
+        )
+        ratio_year_options = (
+            numeric_sorted_unique(filtered_df["year_clean"])
+            if "year_clean" in filtered_df.columns else []
+        )
 
         calculation_view_options = ["Overall"]
-        for option in ["year_clean", "quarter", "half_year", "period_type", "source_file", "metric_source_table"]:
+        for option in [
+            "year_clean", 
+            "quarter",
+            "half_year",
+            "period_type",
+            "source_file",
+            "metric_source_table",
+        ]:
             if option in filtered_df.columns:
                 calculation_view_options.append(option)
 
@@ -751,6 +818,14 @@ def _(filtered_df, mo, numeric_sorted_unique, safe_sorted_unique):
         value="Custom Ratio",
         label="Ratio name",
         placeholder="Enter a ratio name",
+    )
+
+    ratio_decimal_places = mo.ui.number(
+        start=0,
+        stop=6,
+        step=1,
+        value=2,
+        label="Decimal places",
     )
 
     numerator_metrics_widget = mo.ui.multiselect(
@@ -771,27 +846,41 @@ def _(filtered_df, mo, numeric_sorted_unique, safe_sorted_unique):
         label="Calculation view",
     )
 
-    ratio_years_widget = mo.ui.multiselect(
-        options=ratio_year_options,
-        value=ratio_year_options,
-        label="Years to include in ratio calculation",
-    )
+    if ratio_year_options:
+        ratio_year_min, ratio_year_max = min(ratio_year_options), max(ratio_year_options)
+        ratio_year_range = mo.ui.range_slider(
+            start=ratio_year_min,
+            stop=ratio_year_max,
+            value=(ratio_year_min, ratio_year_max),
+            label="Years to include",
+        )
+    else:
+        ratio_year_range = mo.ui.text(
+            value="No valid years found",
+            label="Years unavailable",
+            disabled=True,
+        )
 
-    mo.vstack(
+    ratio_ui = mo.vstack(
         [
             ratio_name_input,
             numerator_metrics_widget,
             denominator_metrics_widget,
             calculation_view,
-            ratio_years_widget,
+            ratio_decimal_places,
+            ratio_year_range,
         ]
     )
+
+    ratio_ui
+
     return (
         calculation_view,
         denominator_metrics_widget,
         numerator_metrics_widget,
+        ratio_decimal_places,
         ratio_name_input,
-        ratio_years_widget,
+        ratio_year_range,
     )
 
 
@@ -801,9 +890,13 @@ def _(
     denominator_metrics_widget,
     filtered_df,
     numerator_metrics_widget,
+    pd,
+    ratio_decimal_places,
     ratio_name_input,
-    ratio_years_widget,
+    ratio_year_range,
 ):
+    effective_decimal_places = max(0, int(ratio_decimal_places.value or 2))
+
     effective_ratio_name = (
         ratio_name_input.value.strip()
         if ratio_name_input.value.strip()
@@ -817,11 +910,21 @@ def _(
         filtered_df is not None
         and not filtered_df.empty
         and "year_clean" in filtered_df.columns
-        and ratio_years_widget.value
     ):
-        ratio_base_df = filtered_df[
-            filtered_df["year_clean"].isin(ratio_years_widget.value)
-        ].copy()
+        ratio_year_value = getattr(ratio_year_range, "value", None)
+
+        if (
+            isinstance(ratio_year_value, (tuple, list))
+            and len(ratio_year_value) == 2
+        ):
+            ratio_year_lo, ratio_year_hi = ratio_year_value
+            ratio_base_df = filtered_df[
+                pd.to_numeric(filtered_df["year_clean"], errors="coerce").between(
+                    ratio_year_lo, ratio_year_hi, inclusive="both"
+                )
+            ].copy()
+        else:
+            ratio_base_df = filtered_df.copy()
     else:
         ratio_base_df = filtered_df.copy()
 
@@ -829,7 +932,9 @@ def _(
         ratio_group_cols = []
     else:
         ratio_group_cols = [calculation_view.value]
+
     return (
+        effective_decimal_places,
         effective_denominators,
         effective_numerators,
         effective_ratio_name,
@@ -837,10 +942,10 @@ def _(
         ratio_group_cols,
     )
 
-
 @app.cell(hide_code=True)
 def _(
     build_ratio_table,
+    effective_decimal_places,
     effective_denominators,
     effective_numerators,
     effective_ratio_name,
@@ -864,11 +969,19 @@ def _(
             numerator_metrics=effective_numerators,
             denominator_metrics=effective_denominators,
             group_cols=ratio_group_cols,
+            decimal_places=effective_decimal_places,
             pd=pd,
             np=np,
         )
 
-    ratio_table_df
+    ratio_table_display_df = ratio_table_df.copy()
+
+    if "year_clean" in ratio_table_display_df.columns:
+        ratio_table_display_df["year_clean"] = ratio_table_display_df["year_clean"].apply(
+            lambda x: str(int(x)) if pd.notna(x) else None
+        )
+
+    ratio_table_display_df
     return (ratio_table_df,)
 
 
@@ -893,7 +1006,7 @@ def _(mo):
     - use **Filtered data**
     - choose **year_clean** on the X-axis
     - choose **value** on the Y-axis
-    - colour by **metric_name** or **metric_category**
+    - colour by **metric_name**
     """)
     return
 
@@ -926,9 +1039,7 @@ def _(chart_dataset_choice, filtered_df, mo, pd, ratio_table_df):
                 "quarter",
                 "half_year",
                 "period_type",
-                "covertype",
                 "source_file",
-                "metric_category",
                 "metric_name",
             ]
             chart_x_options = [c for c in preferred_x if c in chart_source_df.columns]
@@ -1070,12 +1181,19 @@ def _(
             chart = chart.properties(width="container", height=400)
             chart = mo.ui.altair_chart(chart)
 
+    chart_display_df = chart_df.copy()
+
+    if "year_clean" in chart_display_df.columns:
+        chart_display_df["year_clean"] = chart_display_df["year_clean"].apply(
+            lambda x: str(int(x)) if pd.notna(x) else None
+        )
+    
     mo.vstack(
         [
             mo.md("### Chart"),
             chart if chart is not None else mo.md("No chart to display yet."),
             mo.md("### Chart data"),
-            chart_df,
+            chart_display_df,
         ]
     )
     return (chart,)
