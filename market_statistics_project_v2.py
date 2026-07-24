@@ -998,6 +998,10 @@ def _(mo):
     - **Colour / grouping**: optionally splits the chart by an additional category
     - **Chart type**: changes the visual style (line, bar, point, area)
     - **Aggregation for chart**: controls how numeric values are combined before plotting
+
+    ### Altair Features
+    - This chart is rendered using Altair, enabling interactive exploration of the data
+    - Users can highlight specific data points or categories by dragging their mouse over an area of interest
     """)
           
     return
