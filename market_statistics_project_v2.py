@@ -1105,15 +1105,67 @@ def _(chart_dataset_choice, filtered_df, mo, pd, ratio_table_df):
         y_axis,
     )
 
+@app.cell(hide_code=True)
+def _(
+    chart_dataset_choice,
+    chart_source_df,
+    colour_by,
+    mo,
+    safe_sorted_unique,
+    x_axis,
+):
+    if chart_dataset_choice.value == "Filtered data":
+        element_filter_col = colour_by.value if colour_by.value != "None" else x_axis.value
+    else:
+        element_filter_col = None
+
+    if(
+        element_filter_col
+        and chart_source_df is not None
+        and not chart_source_df.empty
+        and element_filter_col in chart_source_df.columns
+    ):
+        element_filter_options = safe_sorted_unique(chart_source_df[element_filter_col])
+    else:
+        element_filter_options = []
+
+    element_filter = mo.ui.multiselect(
+        options = element_filter_options,
+        value = element_filter_options,
+        label=(
+            f"Elements to display ({element_filter_col})"
+            if element_filter_col
+            else "Elements to display"
+        ),
+    )
+
+    if chart_dataset_choice.value == "Filtered data" and element_filter_options:
+        element_filter_ui = mo.vstack(
+            [
+                mo.md(
+                    "### Filter which elements appear on the chart\n"
+                    "Narrow down which of the currently filtered values are actually plotted."
+                ),
+                element_filter,
+            ]
+        )
+    else:
+        element_filter_ui = mo.md("")
+
+    element_filter_ui
+    return element_filter, element_filter_col
 
 @app.cell(hide_code=True)
 def _(
     aggregate_for_chart,
     alt,
     chart_aggregation,
+    chart_dataset_choice,
     chart_source_df,
     chart_type,
     colour_by,
+    element_filter,
+    element_filter_col,
     mo,
     pd,
     x_axis,
@@ -1131,8 +1183,18 @@ def _(
     else:
         color_col = None if colour_by.value == "None" else colour_by.value
 
+        chart_input_df = chart_source_df
+
+        if(
+            chart_dataset_choice.value == "Filtered data"
+            and element_filter_col in chart_input_df.columns
+        ):
+            chart_input_df = chart_input_df[
+                chart_input_df[element_filter_col].astype(str).isin(element_filter.value)
+            ]
+
         chart_df = aggregate_for_chart(
-            df=chart_source_df,
+            df=chart_input_df,
             x_col=x_axis.value,
             y_col=y_axis.value,
             color_col=color_col,
