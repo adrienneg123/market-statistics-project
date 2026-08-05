@@ -433,7 +433,7 @@ def _(pd, re):
         ratio_df[ratio_name] = pd.to_numeric(
             ratio_df[ratio_name], errors="coerce"
         ).round(decimal_places)
-        
+
         return ratio_df
 
 
@@ -623,8 +623,8 @@ def _(master_analysis_df, mo, numeric_sorted_unique, safe_sorted_unique):
             source_file_filter,
         ]
     )
-
     return period_type_filter, source_file_filter, year_range
+
 
 @app.cell(hide_code=True)
 def _(master_analysis_df, mo, safe_sorted_unique, source_file_filter):
@@ -653,8 +653,8 @@ def _(master_analysis_df, mo, safe_sorted_unique, source_file_filter):
     )
 
     metric_name_filter
-
     return (metric_name_filter,)
+
 
 @app.cell(hide_code=True)
 def _(
@@ -685,6 +685,7 @@ def _(
         )
     return (filtered_df,)
 
+
 @app.cell(hide_code=True)
 def _(mo):
     preview_row_mode = mo.ui.dropdown(
@@ -705,7 +706,8 @@ def _(mo):
         preview_row_mode,
         preview_row_limit,
     ])
-    return (preview_row_limit, preview_row_mode,)
+    return preview_row_limit, preview_row_mode
+
 
 @app.cell(hide_code=True)
 def _(filtered_df, mo, pd, preview_row_limit, preview_row_mode):
@@ -870,7 +872,6 @@ def _(filtered_df, mo, numeric_sorted_unique, safe_sorted_unique):
     )
 
     ratio_ui
-
     return (
         calculation_view,
         denominator_metrics_widget,
@@ -929,7 +930,6 @@ def _(
         ratio_group_cols = []
     else:
         ratio_group_cols = [calculation_view.value]
-
     return (
         effective_decimal_places,
         effective_denominators,
@@ -938,6 +938,7 @@ def _(
         ratio_base_df,
         ratio_group_cols,
     )
+
 
 @app.cell(hide_code=True)
 def _(
@@ -1003,7 +1004,6 @@ def _(mo):
     - This chart is rendered using Altair, enabling interactive exploration of the data
     - Users can highlight specific data points or categories by dragging their mouse over an area of interest
     """)
-          
     return
 
 
@@ -1105,6 +1105,7 @@ def _(chart_dataset_choice, filtered_df, mo, pd, ratio_table_df):
         y_axis,
     )
 
+
 @app.cell(hide_code=True)
 def _(
     chart_dataset_choice,
@@ -1154,6 +1155,7 @@ def _(
 
     element_filter_ui
     return element_filter, element_filter_col
+
 
 @app.cell(hide_code=True)
 def _(
@@ -1251,7 +1253,7 @@ def _(
         chart_display_df["year_clean"] = chart_display_df["year_clean"].apply(
             lambda x: str(int(x)) if pd.notna(x) else None
         )
-    
+
     mo.vstack(
         [
             mo.md("### Chart"),
@@ -1269,7 +1271,7 @@ def _(chart):
         selected_chart_data = chart.value
     else:
         selected_chart_data = None
-    
+
     selected_chart_data
     return
 
